@@ -1,0 +1,36 @@
+# T-Display-GD32
+
+![](../../Document/Product.jpg)
+
+* CS Chip Select
+* MOSI/SDI
+* RS/DC Register Select/Data Command
+* A0 Address Select
+* RST Rest
+
+| Pin Name  | Description                   |
+| --------- | ------------------------------|
+| CS/NSS    | Chip Select/Slave Select      |
+| MOSI/SDI  | Master Out Slave In           |
+| RS/DC     | Register Select/Data Command  |
+| A0        | Address Select                |
+| RST/RES   | Rest                          |
+| BLK       | Backlight Control             |
+
+
+
+
+| Pins       | GD32V           |
+| ---------- | --------------- |
+| TFT Driver | ST7789(240*135) |
+| TFT_MISO   | N/A             |
+| TFT_MOSI   | PA7             |
+| TFT_SCLK   | PA5             |
+| TFT_CS     | PB2             |
+| TFT_DC     | PB0             |
+| TFT_RST    | PB1             |
+| TFT_BL     | PB10            |
+| SD_MISO    | PB14            |
+| SD_MOSI    | PB15            |
+| SD_SCLK    | PB13            |
+| SD_CS      | PB12            |
