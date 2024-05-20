@@ -21,7 +21,6 @@ int main(void)
     while (1)
     {
         // red 500ms, green 1000ms, blue 2000ms
-        printf("LEDItemRed Toggle\r\n");
         ToggleLEDItem(LEDItemRed);
         ToggleLEDItem(LEDItemGreen);
         ToggleLEDItem(LEDItemBlue);
