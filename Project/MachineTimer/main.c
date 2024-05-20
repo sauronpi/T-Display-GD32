@@ -9,8 +9,10 @@
 extern void _init();
 
 uint32_t timerCount = 0;
-uint32_t tickCount = 0;
-bool tickCountChanged = false;
+
+bool isNeedToogleLedRed = false;
+bool isNeedToogleLedGreen = false;
+bool isNeedToogleLedBlue = false;
 
 void ECLICConfig(void)
 {
@@ -40,11 +42,20 @@ int main(void)
 
     while (1)
     {
-        if (tickCountChanged)
+        if (isNeedToogleLedRed)
         {
             ToggleLEDItem(LEDItemRed);
-            tickCountChanged = false;
-            printf("tickCount %d\r\n", tickCount);
+            isNeedToogleLedRed = false;
+        }
+        if (isNeedToogleLedGreen)
+        {
+            ToggleLEDItem(LEDItemGreen);
+            isNeedToogleLedGreen = false;
+        }
+        if (isNeedToogleLedBlue)
+        {
+            ToggleLEDItem(LEDItemBlue);
+            isNeedToogleLedBlue = false;
             printf("Machine Timer Vlaue = %u %u\r\n", mtime_hi(), mtime_lo());
         }
     }
@@ -64,10 +75,17 @@ void eclic_mtip_handler(void)
 {
     MTTimerCountClear();
     timerCount++;
-    if (timerCount == 1000)
+    if (timerCount % 500 == 0)
+    {
+        isNeedToogleLedRed = true;
+    }
+    if (timerCount % 1000 == 0)
+    {
+        isNeedToogleLedGreen = true;
+    }
+    if (timerCount % 2000 == 0)
     {
         timerCount = 0;
-        tickCount++;
-        tickCountChanged = true;
+        isNeedToogleLedBlue = true;
     }
 }
