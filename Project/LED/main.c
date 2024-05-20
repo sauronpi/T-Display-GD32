@@ -20,10 +20,18 @@ int main(void)
 
     while (1)
     {
-        printf("hello, world\r\n");
+        // red 500ms, green 1000ms, blue 2000ms
+        printf("LEDItemRed Toggle\r\n");
         ToggleLEDItem(LEDItemRed);
         ToggleLEDItem(LEDItemGreen);
         ToggleLEDItem(LEDItemBlue);
+        delay(500);
+        ToggleLEDItem(LEDItemRed);
+        delay(500);
+        ToggleLEDItem(LEDItemRed);
+        ToggleLEDItem(LEDItemGreen);
+        delay(500);
+        ToggleLEDItem(LEDItemRed);
         delay(500);
     }
 }

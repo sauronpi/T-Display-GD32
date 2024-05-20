@@ -130,7 +130,7 @@ void TaskA(void *parameters)
         // debugprint("mark %d\r\n", mark);
         taskEXIT_CRITICAL();
 #endif
-        LEDToggle(LED_RED);
+        ToggleLEDItem(LEDItemRed);
         vTaskDelay(500);
     }
 }
@@ -144,7 +144,7 @@ void TaskB(void *parameters)
         tsprintf("TaskB\r\n");
         taskEXIT_CRITICAL();
 #endif
-        LEDToggle(LED_GREEN);
+        ToggleLEDItem(LEDItemGreen);
         vTaskDelay(1000);
     }
 }
@@ -158,7 +158,7 @@ void TaskC(void *parameters)
         debugprint("TaskC\r\n");
         taskEXIT_CRITICAL();
 #endif
-        LEDToggle(LED_BLUE);
+        ToggleLEDItem(LEDItemBlue);
         vTaskDelay(1500);
     }
 }

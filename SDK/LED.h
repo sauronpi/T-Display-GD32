@@ -7,15 +7,21 @@
 #include "Foundation.h"
 
 typedef enum {
-    LED_RED,
-    LED_GREEN,
-    LED_BLUE,
-} LED;
+    LEDItemRed,
+    LEDItemGreen,
+    LEDItemBlue,
+} LEDItem;
 
-void LEDInitWithEnable(bool enable);
+typedef enum {
+    LEDStatusOff,
+    LEDStatusOn,
+} LEDStatus;
+
 void LEDInit(void);
-void LEDControl(LED led, bool enable);
-void LEDToggle(LED led);
+void LEDInitWithStatus(LEDStatus status);
+LEDStatus GetLEDStatus(LEDItem item);
+void SetLEDStatus(LEDItem item, LEDStatus status);
+void ToggleLEDItem(LEDItem item);
 
 #ifdef __cplusplus
 }

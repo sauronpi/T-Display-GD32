@@ -42,7 +42,7 @@ int main(void)
     {
         if (tickCountChanged)
         {
-            LEDToggle(LED_RED);
+            ToggleLEDItem(LEDItemRed);
             tickCountChanged = false;
             printf("tickCount %d\r\n", tickCount);
             printf("Machine Timer Vlaue = %u %u\r\n", mtime_hi(), mtime_lo());

@@ -72,7 +72,7 @@ void TaskA(void *parameters)
 #if DEBUG
                 tsprintf("TaskA receive message succeed, value = %d\r\n", message.value);
 #endif
-                LEDToggle(LED_RED);
+                ToggleLEDItem(LEDItemRed);
             }
             else
             {
@@ -97,7 +97,7 @@ void TaskB(void *parameters)
 #if DEBUG
                 tsprintf("TaskB send message succeed, value = %d\r\n", message.value);
 #endif
-                LEDToggle(LED_GREEN);
+                ToggleLEDItem(LEDItemGreen);
                 vTaskDelay(1000);
             }
             else
@@ -123,7 +123,7 @@ void TaskC(void *parameters)
 #if DEBUG
                 tsprintf("TaskC send message succeed, value = %d\r\n", message.value);
 #endif
-                LEDToggle(LED_GREEN);
+                ToggleLEDItem(LEDItemGreen);
                 vTaskDelay(1000);
             }
             else
