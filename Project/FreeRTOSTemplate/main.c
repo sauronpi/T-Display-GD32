@@ -50,8 +50,8 @@ int main(void)
 #if DEBUG
     tsprintf("1\r\n");
 #endif
-    TaskCreate();
-    // xTaskCreate(TaskCreater, "TaskCreater", 256, NULL, 2, &taskCreater);
+    // TaskCreate();
+    xTaskCreate(TaskCreater, "TaskCreater", 256, NULL, 2, &taskCreater);
 #if DEBUG
     tsprintf("2\r\n");
 #endif
@@ -125,13 +125,11 @@ void TaskA(void *parameters)
     while (1)
     {
 #if DEBUG
-        taskENTER_CRITICAL();
         tsprintf("TaskA\r\n");
         // size = xPortGetFreeHeapSize();
         // tsprintf("ta size %d\r\n", size);
         // mark = uxTaskGetStackHighWaterMark(taskA);
         // tsprintf("mark %d\r\n", mark);
-        taskEXIT_CRITICAL();
 #endif
         ToggleLED(LEDItemRed);
         vTaskDelay(500);
@@ -143,9 +141,7 @@ void TaskB(void *parameters)
     while (1)
     {
 #if DEBUG
-        taskENTER_CRITICAL();
         tsprintf("TaskB\r\n");
-        taskEXIT_CRITICAL();
 #endif
         ToggleLED(LEDItemGreen);
         vTaskDelay(1000);
@@ -157,12 +153,10 @@ void TaskC(void *parameters)
     while (1)
     {
 #if DEBUG
-        taskENTER_CRITICAL();
         tsprintf("TaskC\r\n");
-        taskEXIT_CRITICAL();
 #endif
         ToggleLED(LEDItemBlue);
-        vTaskDelay(1500);
+        vTaskDelay(2000);
     }
 }
 
@@ -173,13 +167,11 @@ void TaskD(void *parameters)
     while (1)
     {
 #if DEBUG
-        taskENTER_CRITICAL();
         tsprintf("TaskD\r\n");
         size = xPortGetFreeHeapSize();
         tsprintf("FreeHeapSize %d\r\n", size);
         mark = uxTaskGetStackHighWaterMark2(taskD);
         tsprintf("StackHighWaterMark %d\r\n", mark);
-        taskEXIT_CRITICAL();
 #endif
         vTaskDelay(1000);
     }
@@ -187,11 +179,7 @@ void TaskD(void *parameters)
 
 void freertos_risc_v_application_exception_handler(UBaseType_t mcause)
 {
-    UBaseType_t status = 0;
-
-    status = taskENTER_CRITICAL_FROM_ISR();
     tsprintf("exception: 0x%04x\r\n", mcause);
-    taskEXIT_CRITICAL_FROM_ISR(status);
     // write(1, "trap\n", 5);
     // printf("In trap handler, the mcause is %d\n", mcause);
     // printf("In trap handler, the mepc is 0x%x\n", read_csr(mepc));
@@ -202,11 +190,7 @@ void freertos_risc_v_application_exception_handler(UBaseType_t mcause)
 
 void freertos_risc_v_application_interrupt_handler(UBaseType_t mcause)
 {
-    UBaseType_t status = 0;
-
-    status = taskENTER_CRITICAL_FROM_ISR();
     tsprintf("interrupt: 0x%04x\r\n", mcause);
-    taskEXIT_CRITICAL_FROM_ISR(status);
 }
 
 void vApplicationTickHook(void)
