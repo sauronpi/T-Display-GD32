@@ -44,17 +44,17 @@ int main(void)
     {
         if (isNeedToogleLedRed)
         {
-            ToggleLEDItem(LEDItemRed);
+            ToggleLED(LEDItemRed);
             isNeedToogleLedRed = false;
         }
         if (isNeedToogleLedGreen)
         {
-            ToggleLEDItem(LEDItemGreen);
+            ToggleLED(LEDItemGreen);
             isNeedToogleLedGreen = false;
         }
         if (isNeedToogleLedBlue)
         {
-            ToggleLEDItem(LEDItemBlue);
+            ToggleLED(LEDItemBlue);
             isNeedToogleLedBlue = false;
             printf("Machine Timer Vlaue = %u %u\r\n", mtime_hi(), mtime_lo());
         }

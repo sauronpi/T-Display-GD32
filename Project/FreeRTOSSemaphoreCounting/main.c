@@ -89,7 +89,7 @@ void TaskA(void *parameters)
                 count = uxSemaphoreGetCount(semaphoreCounting);
                 tsprintf("TaskA semaphore take succeed, count = %d\r\n", count);
 #endif
-                ToggleLEDItem(LEDItemRed);
+                ToggleLED(LEDItemRed);
             }
             else
             {
@@ -117,7 +117,7 @@ void TaskB(void *parameters)
                 count = uxSemaphoreGetCount(semaphoreCounting);
                 tsprintf("TaskB semaphore take succeed, count = %d\r\n", count);
 #endif
-                ToggleLEDItem(LEDItemGreen);
+                ToggleLED(LEDItemGreen);
             }
             else
             {

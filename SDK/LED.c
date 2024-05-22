@@ -69,7 +69,7 @@ void SetLEDStatus(LEDItem item, LEDStatus status)
     }
 }
 
-void ToggleLEDItem(LEDItem item)
+void ToggleLED(LEDItem item)
 {
     SetLEDStatus(item, GetLEDStatus(item) == LEDStatusOn ? LEDStatusOff : LEDStatusOn);
 }

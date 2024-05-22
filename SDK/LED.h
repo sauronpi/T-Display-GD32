@@ -21,7 +21,7 @@ void LEDInit(void);
 void LEDInitWithStatus(LEDStatus status);
 LEDStatus GetLEDStatus(LEDItem item);
 void SetLEDStatus(LEDItem item, LEDStatus status);
-void ToggleLEDItem(LEDItem item);
+void ToggleLED(LEDItem item);
 
 #ifdef __cplusplus
 }

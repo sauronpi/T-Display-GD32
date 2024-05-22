@@ -82,7 +82,7 @@ void TaskA(void *parameters)
 #if DEBUG
                 tsprintf("TaskA semaphore take succeed\r\n");
 #endif
-                ToggleLEDItem(LEDItemRed);
+                ToggleLED(LEDItemRed);
                 if (xSemaphoreGive(semaphoreMutex) == pdPASS)
                 {
 #if DEBUG
@@ -118,7 +118,7 @@ void TaskB(void *parameters)
 #if DEBUG
                 tsprintf("TaskB semaphore take succeed\r\n");
 #endif
-                ToggleLEDItem(LEDItemGreen);
+                ToggleLED(LEDItemGreen);
                 if (xSemaphoreGive(semaphoreMutex) == pdPASS)
                 {
 #if DEBUG

@@ -21,16 +21,16 @@ int main(void)
     while (1)
     {
         // red 500ms, green 1000ms, blue 2000ms
-        ToggleLEDItem(LEDItemRed);
-        ToggleLEDItem(LEDItemGreen);
-        ToggleLEDItem(LEDItemBlue);
+        ToggleLED(LEDItemRed);
+        ToggleLED(LEDItemGreen);
+        ToggleLED(LEDItemBlue);
         delay(500);
-        ToggleLEDItem(LEDItemRed);
+        ToggleLED(LEDItemRed);
         delay(500);
-        ToggleLEDItem(LEDItemRed);
-        ToggleLEDItem(LEDItemGreen);
+        ToggleLED(LEDItemRed);
+        ToggleLED(LEDItemGreen);
         delay(500);
-        ToggleLEDItem(LEDItemRed);
+        ToggleLED(LEDItemRed);
         delay(500);
     }
 }

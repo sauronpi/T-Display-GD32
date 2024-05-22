@@ -26,9 +26,9 @@ int main(void)
     while (1)
     {
         printf("hello, world\r\n");
-        ToggleLEDItem(LEDItemRed);
-        ToggleLEDItem(LEDItemGreen);
-        ToggleLEDItem(LEDItemBlue);
+        ToggleLED(LEDItemRed);
+        ToggleLED(LEDItemGreen);
+        ToggleLED(LEDItemBlue);
         delay(500);
     }
 }
