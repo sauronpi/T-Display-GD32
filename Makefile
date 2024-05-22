@@ -41,7 +41,7 @@ C_INCLUDES +=  \
 -I $(GD32VF103_FIRMWARE_DIR)/Firmware/GD32VF103_standard_peripheral \
 -I $(GD32VF103_FIRMWARE_DIR)/Firmware/RISCV/drivers \
 -I $(GD32VF103_FIRMWARE_DIR)/Firmware/RISCV/stubs \
--I SDK \
+-I SDK
 
 C_SOURCES =  \
 $(wildcard $(GD32VF103_FIRMWARE_DIR)/Firmware/GD32VF103_standard_peripheral/Source/*.c) \
@@ -49,7 +49,7 @@ $(wildcard $(GD32VF103_FIRMWARE_DIR)/Firmware/GD32VF103_standard_peripheral/*.c)
 $(wildcard $(GD32VF103_FIRMWARE_DIR)/Firmware/RISCV/drivers/*.c) \
 $(wildcard $(GD32VF103_FIRMWARE_DIR)/Firmware/RISCV/env_Eclipse/*.c) \
 $(wildcard $(GD32VF103_FIRMWARE_DIR)/Firmware/RISCV/stubs/*.c) \
-$(wildcard $(SDK_DIR)/*.c) \
+$(wildcard $(SDK_DIR)/*.c)
 
 # OS
 
@@ -57,7 +57,7 @@ ifdef OS
 C_INCLUDES += \
 -I $(OSD_DIR)
 C_SOURCES += \
-$(OSD_DIR)
+$(wildcard $(OSD_DIR)/*.c)
 endif
 
 ifeq ($(OS), FreeRTOS)
