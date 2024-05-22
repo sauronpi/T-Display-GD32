@@ -179,28 +179,34 @@ void TaskD(void *parameters)
 
 void freertos_risc_v_application_exception_handler(UBaseType_t mcause)
 {
-    tsprintf("exception: 0x%04x\r\n", mcause);
-    // write(1, "trap\n", 5);
-    // printf("In trap handler, the mcause is %d\n", mcause);
-    // printf("In trap handler, the mepc is 0x%x\n", read_csr(mepc));
-    // printf("In trap handler, the mtval is 0x%x\n", read_csr(mbadaddr));
-    // _exit(mcause);
-    // return 0;
+#if DEBUG_EXCEPTION
+    tsprintfisr("exception: 0x%04x\r\n", mcause);
+    tsprintfisr("In trap handler, the mcause is %d\n", mcause);
+    tsprintfisr("In trap handler, the mepc is 0x%x\n", read_csr(mepc));
+    tsprintfisr("In trap handler, the mtval is 0x%x\n", read_csr(mbadaddr));
+    _exit(mcause);
+#endif
 }
 
 void freertos_risc_v_application_interrupt_handler(UBaseType_t mcause)
 {
-    tsprintf("interrupt: 0x%04x\r\n", mcause);
+#if DEBUG_INTERRUPT
+    tsprintfisr("interrupt: 0x%04x\r\n", mcause);
+#endif
 }
 
 void vApplicationTickHook(void)
 {
-    // tsprintf("Tick\r\n");
+#if DEBUG_HOOK
+// tsprintf("Tick\r\n");
+#endif
 }
 
 void vApplicationIdleHook(void)
 {
-    // tsprintf("Idle\r\n");
+#if DEBUG_HOOK
+// tsprintf("Idle\r\n");
+#endif
 }
 
 void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName)

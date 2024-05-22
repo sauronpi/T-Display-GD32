@@ -8,24 +8,29 @@
 #include "task.h"
 #include "queue.h"
 
+#include "tsprintf.h"
+
+// 系统初始化函数使用标准工具链时没有在main函数前调用,声明后手动调用
+extern void _init();
+
+void TaskCreater(void *parameters);
+void TaskA(void *parameters);
+void TaskB(void *parameters);
+void TaskC(void *parameters);
+void TaskD(void *parameters);
+
 typedef struct
 {
     int value;
 } Message;
 
+TaskHandle_t taskCreater = NULL;
 TaskHandle_t taskA = NULL;
 TaskHandle_t taskB = NULL;
 TaskHandle_t taskC = NULL;
+TaskHandle_t taskD = NULL;
 
 QueueHandle_t taskAMessageQueue = NULL;
-
-// 系统初始化函数使用标准工具链时没有在main函数前调用,声明后手动调用
-extern void _init();
-
-void TaskCreate(void);
-void TaskA(void *parameters);
-void TaskB(void *parameters);
-void TaskC(void *parameters);
 
 void IRQConfigure(void)
 {
@@ -42,7 +47,7 @@ int main(void)
     USARTInit();
     LEDInit();
 
-    TaskCreate();
+    xTaskCreate(TaskCreater, "TaskCreater", 256, NULL, 2, &taskCreater);
     vTaskStartScheduler();
 
     while (1)
@@ -52,11 +57,15 @@ int main(void)
     return 0;
 }
 
-void TaskCreate(void)
+void TaskCreater(void *parameters)
 {
-    xTaskCreate(TaskA, "TaskA", 256, NULL, 3, &taskA);
-    xTaskCreate(TaskB, "TaskB", 256, NULL, 3, &taskB);
-    xTaskCreate(TaskC, "TaskC", 256, NULL, 3, &taskB);
+    taskENTER_CRITICAL();
+    xTaskCreate(TaskA, "TaskA", 256, NULL, 2, &taskA);
+    xTaskCreate(TaskB, "TaskB", 256, NULL, 2, &taskB);
+    xTaskCreate(TaskC, "TaskC", 256, NULL, 2, &taskC);
+    xTaskCreate(TaskD, "TaskD", 256, NULL, 2, &taskD);
+    taskEXIT_CRITICAL();
+    vTaskDelete(taskCreater);
 }
 
 void TaskA(void *parameters)
@@ -123,8 +132,8 @@ void TaskC(void *parameters)
 #if DEBUG
                 tsprintf("TaskC send message succeed, value = %d\r\n", message.value);
 #endif
-                ToggleLED(LEDItemGreen);
-                vTaskDelay(1000);
+                ToggleLED(LEDItemBlue);
+                vTaskDelay(1500);
             }
             else
             {
@@ -133,6 +142,23 @@ void TaskC(void *parameters)
 #endif
             }
         }
+    }
+}
+
+void TaskD(void *parameters)
+{
+    size_t size = 0;
+    configSTACK_DEPTH_TYPE mark = 0;
+    while (1)
+    {
+#if DEBUG
+        tsprintf("TaskD\r\n");
+        size = xPortGetFreeHeapSize();
+        tsprintf("FreeHeapSize %d\r\n", size);
+        mark = uxTaskGetStackHighWaterMark2(taskD);
+        tsprintf("StackHighWaterMark %d\r\n", mark);
+#endif
+        vTaskDelay(1000);
     }
 }
 

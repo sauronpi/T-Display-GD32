@@ -9,8 +9,8 @@ make clean
 #
 # TARGET=ADC0
 # TARGET=ADC0Temperature
-# TARGET=HelloWorld
-TARGET=LED
+TARGET=HelloWorld
+# TARGET=LED
 # TARGET=LCD
 # TARGET=MachineTimer
 # TARGET=SPI0-ST7789V
