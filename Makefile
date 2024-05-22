@@ -88,7 +88,7 @@ DEBUG = 1
 OPT = -Og
 
 # Build path
-BUILD_DIR = build
+BUILD_DIR = Build
 
 
 ######################################
