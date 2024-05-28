@@ -46,8 +46,8 @@ typedef struct
 
 TimerInfo timerInfos[] =    {
                             {"LEDRed", 500, true, TimerIDLEDRed, TimerHandler},
-                            {"LEDGreen", 500, true, TimerIDLEDGreen, TimerHandler},
-                            {"LEDBlue", 500, true, TimerIDLEDBlue, TimerHandler}
+                            {"LEDGreen", 1000, true, TimerIDLEDGreen, TimerHandler},
+                            {"LEDBlue", 1500, true, TimerIDLEDBlue, TimerHandler}
                             };
 
 TimerHandle_t xTimers[TimerIDNumbers];
