@@ -47,24 +47,18 @@ int main(void)
     USARTInit();
     LEDInit();
 
-#if DEBUG
     printf("size of char = %d\r\n", sizeof(char));
     printf("size of short = %d\r\n", sizeof(short));
     printf("size of int = %d\r\n", sizeof(int));
     printf("size of long = %d\r\n", sizeof(long));
-#endif
     // TaskCreate();
     xTaskCreate(TaskCreater, "TaskCreater", 256, NULL, 2, &taskCreater);
-#if DEBUG
     printf("2\r\n");
-#endif
     vTaskStartScheduler();
-#if DEBUG
     while (1)
     {
         printf("RTOS Exit\r\n");
     }
-#endif
 }
 
 /* retarget the C library printf function to the USART */
@@ -79,35 +73,23 @@ void TaskCreate(void)
 {
     size_t size = 0;
     size = xPortGetFreeHeapSize();
-#if DEBUG
     printf("tc1 size %d\r\n", size);
-#endif
     xTaskCreate(TaskA, "TaskA", 256, NULL, 3, &taskA);
     size = xPortGetFreeHeapSize();
-#if DEBUG
     printf("tc2 size %d\r\n", size);
-#endif
     xTaskCreate(TaskB, "TaskB", 256, NULL, 3, &taskB);
     size = xPortGetFreeHeapSize();
-#if DEBUG
     printf("tc3 size %d\r\n", size);
-#endif
     xTaskCreate(TaskC, "TaskC", 256, NULL, 3, &taskC);
     size = xPortGetFreeHeapSize();
-#if DEBUG
     printf("tc4 size %d\r\n", size);
-#endif
     xTaskCreate(TaskD, "TaskD", 256, NULL, 2, &taskD);
     size = xPortGetFreeHeapSize();
-#if DEBUG
     printf("tc5 size %d\r\n", size);
-#endif
-#if DEBUG
     printf("A=%x\r\n", taskA);
     printf("B=%x\r\n", taskB);
     printf("C=%x\r\n", taskC);
     printf("D=%x\r\n", taskD);
-#endif
 }
 
 void TaskCreater(void *parameters)
@@ -127,13 +109,7 @@ void TaskA(void *parameters)
     UBaseType_t mark = 0;
     while (1)
     {
-#if DEBUG
         printf("TaskA\r\n");
-        // size = xPortGetFreeHeapSize();
-        // printf("ta size %d\r\n", size);
-        // mark = uxTaskGetStackHighWaterMark(taskA);
-        // printf("mark %d\r\n", mark);
-#endif
         ToggleLED(LEDItemRed);
         vTaskDelay(500);
     }
@@ -143,9 +119,7 @@ void TaskB(void *parameters)
 {
     while (1)
     {
-#if DEBUG
         printf("TaskB\r\n");
-#endif
         ToggleLED(LEDItemGreen);
         vTaskDelay(1000);
     }
@@ -155,9 +129,7 @@ void TaskC(void *parameters)
 {
     while (1)
     {
-#if DEBUG
         printf("TaskC\r\n");
-#endif
         ToggleLED(LEDItemBlue);
         vTaskDelay(2000);
     }
@@ -169,7 +141,6 @@ void TaskD(void *parameters)
     configSTACK_DEPTH_TYPE mark = 0;
     while (1)
     {
-#if DEBUG
         printf("TaskD\r\n");
         size = xPortGetFreeHeapSize();
         printf("FreeHeapSize %d\r\n", size);
@@ -181,26 +152,22 @@ void TaskD(void *parameters)
         printf("Task C StackHighWaterMark %d\r\n", mark);
         mark = uxTaskGetStackHighWaterMark2(taskD);
         printf("Task D StackHighWaterMark %d\r\n", mark);
-#endif
         vTaskDelay(1000);
     }
 }
 
 void freertos_risc_v_application_exception_handler(UBaseType_t mcause)
 {
-#if DEBUG_EXCEPTION
-    printf("exception: 0x%04x\r\n", mcause);
-    printf("In trap handler, the mcause is %d\n", mcause);
-    // printf("In trap handler, the mepc is 0x%x\n", read_csr(mepc));
-    // printf("In trap handler, the mtval is 0x%x\n", read_csr(mbadaddr));
-    // _exit(mcause);
-#endif
+    printf("exception: the mcause is 0x%x\r\n", mcause);
+    // printf("exception, the mepc is 0x%x\n", read_csr(mepc));
+    // printf("exception, the mtval is 0x%x\n", read_csr(mbadaddr));
+    for(;;);
 }
 
 void freertos_risc_v_application_interrupt_handler(UBaseType_t mcause)
 {
 #if DEBUG_INTERRUPT
-    printf("interrupt: 0x%04x\r\n", mcause);
+    printf("interrupt: the mcause is %x\r\n", mcause);
 #endif
 }
 
