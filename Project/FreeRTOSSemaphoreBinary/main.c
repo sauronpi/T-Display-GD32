@@ -48,13 +48,13 @@ int main(void)
     if (semaphoreBinary != NULL)
     {
 #if DEBUG
-        tsprintf("Semaphore create Succeed\r\n");
+        printf("Semaphore create Succeed\r\n");
 #endif
     }
     else
     {
 #if DEBUG
-        tsprintf("Semaphore create Failed\r\n");
+        printf("Semaphore create Failed\r\n");
 #endif
     }
     xTaskCreate(TaskCreater, "TaskCreater", 256, NULL, 2, &taskCreater);
@@ -62,7 +62,7 @@ int main(void)
 
     while (1)
     {
-        tsprintf("RTOS Exit\r\n");
+        printf("RTOS Exit\r\n");
     }
     return 0;
 }
@@ -86,14 +86,14 @@ void TaskA(void *parameters)
             if (xQueueSemaphoreTake(semaphoreBinary, portMAX_DELAY) == pdTRUE)
             {
 #if DEBUG
-                tsprintf("TaskA semaphore take succeed\r\n");
+                printf("TaskA semaphore take succeed\r\n");
 #endif
                 ToggleLED(LEDItemRed);
             }
             else
             {
 #if DEBUG
-                tsprintf("TaskA semaphore take failed\r\n");
+                printf("TaskA semaphore take failed\r\n");
 #endif
             }
         }
@@ -110,14 +110,14 @@ void TaskB(void *parameters)
             if (xQueueSemaphoreTake(semaphoreBinary, portMAX_DELAY) == pdTRUE)
             {
 #if DEBUG
-                tsprintf("TaskB semaphore take succeed\r\n");
+                printf("TaskB semaphore take succeed\r\n");
 #endif
                 ToggleLED(LEDItemGreen);
             }
             else
             {
 #if DEBUG
-                tsprintf("TaskB semaphore take failed\r\n");
+                printf("TaskB semaphore take failed\r\n");
 #endif
             }
         }
@@ -132,13 +132,13 @@ void TaskC(void *parameters)
     //         if (xSemaphoreGive(semaphoreBinary) == pdPASS)
     //         {
     // #if DEBUG
-    //             tsprintf("TaskC semaphore give succeed\r\n");
+    //             printf("TaskC semaphore give succeed\r\n");
     // #endif
     //         }
     //         else
     //         {
     // #if DEBUG
-    //             tsprintf("TaskC semaphore give failed\r\n");
+    //             printf("TaskC semaphore give failed\r\n");
     // #endif
     //         }
 
@@ -148,7 +148,7 @@ void TaskC(void *parameters)
         random = RandomWithRange(1, 5);
         vTaskDelay(random * 1000);
 #if DEBUG
-        tsprintf("task c done, delay = %ds\r\n", random);
+        printf("task c done, delay = %ds\r\n", random);
 #endif
     }
 }
@@ -156,10 +156,10 @@ void TaskC(void *parameters)
 void freertos_risc_v_application_exception_handler(UBaseType_t mcause)
 {
 #if DEBUG_EXCEPTION
-    tsprintfisr("exception: 0x%04x\r\n", mcause);
-    tsprintfisr("In trap handler, the mcause is %d\n", mcause);
-    tsprintfisr("In trap handler, the mepc is 0x%x\n", read_csr(mepc));
-    tsprintfisr("In trap handler, the mtval is 0x%x\n", read_csr(mbadaddr));
+    printf("exception: 0x%04x\r\n", mcause);
+    printf("In trap handler, the mcause is %d\n", mcause);
+    printf("In trap handler, the mepc is 0x%x\n", read_csr(mepc));
+    printf("In trap handler, the mtval is 0x%x\n", read_csr(mbadaddr));
     _exit(mcause);
 #endif
 }
@@ -167,41 +167,41 @@ void freertos_risc_v_application_exception_handler(UBaseType_t mcause)
 void freertos_risc_v_application_interrupt_handler(UBaseType_t mcause)
 {
 #if DEBUG_INTERRUPT
-    tsprintfisr("interrupt: 0x%04x\r\n", mcause);
+    printf("interrupt: 0x%04x\r\n", mcause);
 #endif
 }
 
 void vApplicationTickHook(void)
 {
 #if DEBUG_HOOK
-// tsprintf("Tick\r\n");
+// printf("Tick\r\n");
 #endif
 }
 
 void vApplicationIdleHook(void)
 {
 #if DEBUG_HOOK
-// tsprintf("Idle\r\n");
+// printf("Idle\r\n");
 #endif
 }
 
 void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName)
 {
 #if DEBUG_HOOK
-    tsprintf("task：%s Overflow\r\n", pcTaskName);
+    printf("task：%s Overflow\r\n", pcTaskName);
 #endif
 }
 
 void vApplicationMallocFailedHook(void)
 {
 #if DEBUG_HOOK
-    tsprintf("MallocFailed\r\n");
+    printf("MallocFailed\r\n");
 #endif
 }
 
 void vApplicationDaemonTaskStartupHook(void)
 {
 #if DEBUG_HOOK
-    tsprintf("DaemonTask\r\n");
+    printf("DaemonTask\r\n");
 #endif
 }

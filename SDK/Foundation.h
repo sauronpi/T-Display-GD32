@@ -17,8 +17,8 @@ typedef unsigned char   uint8;
 typedef unsigned short  uint16;
 typedef unsigned int    uint32;
 
-// #define ON      1
-// #define OFF     0
+#define ON      1
+#define OFF     0
 
 void delay(uint millionSeconds);
 int RandomWithRange(int fromNumber, int toNumer);

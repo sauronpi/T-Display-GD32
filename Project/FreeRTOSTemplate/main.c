@@ -48,18 +48,21 @@ int main(void)
     LEDInit();
 
 #if DEBUG
-    tsprintf("1\r\n");
+    printf("size of char = %d\r\n", sizeof(char));
+    printf("size of short = %d\r\n", sizeof(short));
+    printf("size of int = %d\r\n", sizeof(int));
+    printf("size of long = %d\r\n", sizeof(long));
 #endif
     // TaskCreate();
     xTaskCreate(TaskCreater, "TaskCreater", 256, NULL, 2, &taskCreater);
 #if DEBUG
-    tsprintf("2\r\n");
+    printf("2\r\n");
 #endif
     vTaskStartScheduler();
 #if DEBUG
     while (1)
     {
-        tsprintf("RTOS Exit\r\n");
+        printf("RTOS Exit\r\n");
     }
 #endif
 }
@@ -77,33 +80,33 @@ void TaskCreate(void)
     size_t size = 0;
     size = xPortGetFreeHeapSize();
 #if DEBUG
-    tsprintf("tc1 size %d\r\n", size);
+    printf("tc1 size %d\r\n", size);
 #endif
     xTaskCreate(TaskA, "TaskA", 256, NULL, 3, &taskA);
     size = xPortGetFreeHeapSize();
 #if DEBUG
-    tsprintf("tc2 size %d\r\n", size);
+    printf("tc2 size %d\r\n", size);
 #endif
     xTaskCreate(TaskB, "TaskB", 256, NULL, 3, &taskB);
     size = xPortGetFreeHeapSize();
 #if DEBUG
-    tsprintf("tc3 size %d\r\n", size);
+    printf("tc3 size %d\r\n", size);
 #endif
     xTaskCreate(TaskC, "TaskC", 256, NULL, 3, &taskC);
     size = xPortGetFreeHeapSize();
 #if DEBUG
-    tsprintf("tc4 size %d\r\n", size);
+    printf("tc4 size %d\r\n", size);
 #endif
     xTaskCreate(TaskD, "TaskD", 256, NULL, 2, &taskD);
     size = xPortGetFreeHeapSize();
 #if DEBUG
-    tsprintf("tc5 size %d\r\n", size);
+    printf("tc5 size %d\r\n", size);
 #endif
 #if DEBUG
-    tsprintf("A=%x\r\n", taskA);
-    tsprintf("B=%x\r\n", taskB);
-    tsprintf("C=%x\r\n", taskC);
-    tsprintf("D=%x\r\n", taskD);
+    printf("A=%x\r\n", taskA);
+    printf("B=%x\r\n", taskB);
+    printf("C=%x\r\n", taskC);
+    printf("D=%x\r\n", taskD);
 #endif
 }
 
@@ -125,11 +128,11 @@ void TaskA(void *parameters)
     while (1)
     {
 #if DEBUG
-        tsprintf("TaskA\r\n");
+        printf("TaskA\r\n");
         // size = xPortGetFreeHeapSize();
-        // tsprintf("ta size %d\r\n", size);
+        // printf("ta size %d\r\n", size);
         // mark = uxTaskGetStackHighWaterMark(taskA);
-        // tsprintf("mark %d\r\n", mark);
+        // printf("mark %d\r\n", mark);
 #endif
         ToggleLED(LEDItemRed);
         vTaskDelay(500);
@@ -141,7 +144,7 @@ void TaskB(void *parameters)
     while (1)
     {
 #if DEBUG
-        tsprintf("TaskB\r\n");
+        printf("TaskB\r\n");
 #endif
         ToggleLED(LEDItemGreen);
         vTaskDelay(1000);
@@ -153,7 +156,7 @@ void TaskC(void *parameters)
     while (1)
     {
 #if DEBUG
-        tsprintf("TaskC\r\n");
+        printf("TaskC\r\n");
 #endif
         ToggleLED(LEDItemBlue);
         vTaskDelay(2000);
@@ -167,11 +170,17 @@ void TaskD(void *parameters)
     while (1)
     {
 #if DEBUG
-        tsprintf("TaskD\r\n");
+        printf("TaskD\r\n");
         size = xPortGetFreeHeapSize();
-        tsprintf("FreeHeapSize %d\r\n", size);
+        printf("FreeHeapSize %d\r\n", size);
+        mark = uxTaskGetStackHighWaterMark2(taskA);
+        printf("Task A StackHighWaterMark %d\r\n", mark);
+        mark = uxTaskGetStackHighWaterMark2(taskB);
+        printf("Task B StackHighWaterMark %d\r\n", mark);
+        mark = uxTaskGetStackHighWaterMark2(taskC);
+        printf("Task C StackHighWaterMark %d\r\n", mark);
         mark = uxTaskGetStackHighWaterMark2(taskD);
-        tsprintf("StackHighWaterMark %d\r\n", mark);
+        printf("Task D StackHighWaterMark %d\r\n", mark);
 #endif
         vTaskDelay(1000);
     }
@@ -180,52 +189,52 @@ void TaskD(void *parameters)
 void freertos_risc_v_application_exception_handler(UBaseType_t mcause)
 {
 #if DEBUG_EXCEPTION
-    tsprintfisr("exception: 0x%04x\r\n", mcause);
-    tsprintfisr("In trap handler, the mcause is %d\n", mcause);
-    tsprintfisr("In trap handler, the mepc is 0x%x\n", read_csr(mepc));
-    tsprintfisr("In trap handler, the mtval is 0x%x\n", read_csr(mbadaddr));
-    _exit(mcause);
+    printf("exception: 0x%04x\r\n", mcause);
+    printf("In trap handler, the mcause is %d\n", mcause);
+    // printf("In trap handler, the mepc is 0x%x\n", read_csr(mepc));
+    // printf("In trap handler, the mtval is 0x%x\n", read_csr(mbadaddr));
+    // _exit(mcause);
 #endif
 }
 
 void freertos_risc_v_application_interrupt_handler(UBaseType_t mcause)
 {
 #if DEBUG_INTERRUPT
-    tsprintfisr("interrupt: 0x%04x\r\n", mcause);
+    printf("interrupt: 0x%04x\r\n", mcause);
 #endif
 }
 
 void vApplicationTickHook(void)
 {
-#if DEBUG_HOOK
-// tsprintf("Tick\r\n");
+#if configUSE_TICK_HOOK == ON
+    printf("Tick\r\n");
 #endif
 }
 
 void vApplicationIdleHook(void)
 {
-#if DEBUG_HOOK
-// tsprintf("Idle\r\n");
+#if configUSE_IDLE_HOOK == ON
+    printf("Idle\r\n");
 #endif
 }
 
 void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName)
 {
-#if DEBUG_HOOK
-    tsprintf("task：%s Overflow\r\n", pcTaskName);
+#if configCHECK_FOR_STACK_OVERFLOW == ON
+    printf("task：%s Overflow\r\n", pcTaskName);
 #endif
 }
 
 void vApplicationMallocFailedHook(void)
 {
-#if DEBUG_HOOK
-    tsprintf("MallocFailed\r\n");
+#if configUSE_MALLOC_FAILED_HOOK == ON
+    printf("MallocFailed\r\n");
 #endif
 }
 
 void vApplicationDaemonTaskStartupHook(void)
 {
-#if DEBUG_HOOK
-    tsprintf("DaemonTask\r\n");
+#if configUSE_DAEMON_TASK_STARTUP_HOOK == ON
+    printf("DaemonTask\r\n");
 #endif
 }

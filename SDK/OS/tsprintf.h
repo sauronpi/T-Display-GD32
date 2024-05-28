@@ -4,7 +4,6 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
-void tsprintf(const char *format, ...);
-void tsprintfisr(const char *format, ...);
+void printfisr(const char *format, ...);
 
 #endif /* TSPRINTF_H */

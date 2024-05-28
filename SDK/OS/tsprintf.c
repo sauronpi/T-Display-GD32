@@ -2,6 +2,8 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
+extern int printf(const char *format, ...) __attribute__((weak));
+
 static void printchar(char **str, int c)
 {
 	extern int putchar(int c);
@@ -191,9 +193,10 @@ static int print(char **out, const char *format, va_list args)
 int printf(const char *format, ...)
 {
 	va_list args;
-
+	taskENTER_CRITICAL();
 	va_start(args, format);
 	return print(0, format, args);
+	taskENTER_CRITICAL();
 }
 
 int sprintf(char *out, const char *format, ...)
@@ -214,16 +217,7 @@ int snprintf(char *buf, unsigned int count, const char *format, ...)
 	return print(&buf, format, args);
 }
 
-void tsprintf(const char *format, ...)
-{
-	va_list args;
-	taskENTER_CRITICAL();
-	va_start(args, format);
-	print(0, format, args);
-	taskEXIT_CRITICAL();
-}
-
-void tsprintfisr(const char *format, ...)
+void printfisr(const char *format, ...)
 {
 	va_list args;
 	UBaseType_t status = 0;
