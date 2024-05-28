@@ -19,7 +19,7 @@ void TaskA(void *parameters);
 void TaskB(void *parameters);
 void TaskC(void *parameters);
 void TaskD(void *parameters);
-void TimerCallback(TimerHandle_t xTimer);
+void TimerHandler(TimerHandle_t xTimer);
 
 TaskHandle_t taskCreater = NULL;
 TaskHandle_t taskA = NULL;
@@ -41,13 +41,13 @@ typedef struct
     const TickType_t period;
     const bool autoReload;
     const TimerID id;
-    const TimerCallbackFunction_t callBack;
+    const TimerCallbackFunction_t handler;
 } TimerInfo;
 
 TimerInfo timerInfos[] =    {
-                            {"LEDRed", 500, true, TimerIDLEDRed, TimerCallback},
-                            {"LEDGreen", 500, true, TimerIDLEDGreen, TimerCallback},
-                            {"LEDBlue", 500, true, TimerIDLEDBlue, TimerCallback}
+                            {"LEDRed", 500, true, TimerIDLEDRed, TimerHandler},
+                            {"LEDGreen", 500, true, TimerIDLEDGreen, TimerHandler},
+                            {"LEDBlue", 500, true, TimerIDLEDBlue, TimerHandler}
                             };
 
 TimerHandle_t xTimers[TimerIDNumbers];
@@ -94,7 +94,7 @@ int main(void)
                                   (void *)timerInfos[x].id,
                                   /* Each timer calls the same callback when
                                   it expires. */
-                                  timerInfos[x].callBack);
+                                  timerInfos[x].handler);
 
         if (xTimers[x] == NULL)
         {
@@ -269,7 +269,7 @@ instances.  The callback function does nothing but count the number
 of times the associated timer expires, and stop the timer once the
 timer has expired 10 times.  The count is saved as the ID of the
 timer. */
-void TimerCallback(TimerHandle_t xTimer)
+void TimerHandler(TimerHandle_t xTimer)
 {
     TimerID timerID;
 
