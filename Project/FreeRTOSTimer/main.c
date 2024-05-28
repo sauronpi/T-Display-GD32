@@ -19,7 +19,7 @@ void TaskA(void *parameters);
 void TaskB(void *parameters);
 void TaskC(void *parameters);
 void TaskD(void *parameters);
-void vTimerCallback(TimerHandle_t xTimer);
+void TimerCallback(TimerHandle_t xTimer);
 
 TaskHandle_t taskCreater = NULL;
 TaskHandle_t taskA = NULL;
@@ -35,7 +35,20 @@ typedef enum
     TimerIDNumbers,
 } TimerID;
 
-char *timerNames[] = {"Red", "Green", "Blue"};
+typedef struct
+{
+    const char * name;
+    const TickType_t period;
+    const bool autoReload;
+    const TimerID id;
+    const TimerCallbackFunction_t callBack;
+} TimerInfo;
+
+TimerInfo timerInfos[] =    {
+                            {"LEDRed", 500, true, TimerIDLEDRed, TimerCallback},
+                            {"LEDGreen", 500, true, TimerIDLEDGreen, TimerCallback},
+                            {"LEDBlue", 500, true, TimerIDLEDBlue, TimerCallback}
+                            };
 
 TimerHandle_t xTimers[TimerIDNumbers];
 
@@ -68,20 +81,20 @@ int main(void)
     {
         xTimers[x] = xTimerCreate(/* Just a text name, not used by the RTOS
                                   kernel. */
-                                  timerNames[x],
+                                  timerInfos[x].name,
                                   /* The timer period in ticks, must be
                                   greater than 0. */
-                                  pdMS_TO_TICKS(500 * (x + 1)),
+                                  timerInfos[x].period,
                                   /* The timers will auto-reload themselves
                                   when they expire. */
-                                  pdTRUE,
+                                  timerInfos[x].autoReload,
                                   /* The ID is used to store a count of the
                                   number of times the timer has expired, which
                                   is initialised to 0. */
-                                  (void *)x,
+                                  (void *)timerInfos[x].id,
                                   /* Each timer calls the same callback when
                                   it expires. */
-                                  vTimerCallback);
+                                  timerInfos[x].callBack);
 
         if (xTimers[x] == NULL)
         {
@@ -102,16 +115,9 @@ int main(void)
 
     // TaskCreate();
     // xTaskCreate(TaskCreater, "TaskCreater", 256, NULL, 2, &taskCreater);
-#if DEBUG
-    printf("2\r\n");
-#endif
     vTaskStartScheduler();
-#if DEBUG
-    while (1)
-    {
-        printf("RTOS Exit\r\n");
-    }
-#endif
+    printf("FreeRTOS Exit\r\n");
+    for(;;);
 }
 
 /* retarget the C library printf function to the USART */
@@ -126,35 +132,23 @@ void TaskCreate(void)
 {
     size_t size = 0;
     size = xPortGetFreeHeapSize();
-#if DEBUG
     printf("tc1 size %d\r\n", size);
-#endif
     xTaskCreate(TaskA, "TaskA", 256, NULL, 3, &taskA);
     size = xPortGetFreeHeapSize();
-#if DEBUG
     printf("tc2 size %d\r\n", size);
-#endif
     xTaskCreate(TaskB, "TaskB", 256, NULL, 3, &taskB);
     size = xPortGetFreeHeapSize();
-#if DEBUG
     printf("tc3 size %d\r\n", size);
-#endif
     xTaskCreate(TaskC, "TaskC", 256, NULL, 3, &taskC);
     size = xPortGetFreeHeapSize();
-#if DEBUG
     printf("tc4 size %d\r\n", size);
-#endif
     xTaskCreate(TaskD, "TaskD", 256, NULL, 2, &taskD);
     size = xPortGetFreeHeapSize();
-#if DEBUG
     printf("tc5 size %d\r\n", size);
-#endif
-#if DEBUG
     printf("A=%x\r\n", taskA);
     printf("B=%x\r\n", taskB);
     printf("C=%x\r\n", taskC);
     printf("D=%x\r\n", taskD);
-#endif
 }
 
 void TaskCreater(void *parameters)
@@ -174,13 +168,7 @@ void TaskA(void *parameters)
     UBaseType_t mark = 0;
     while (1)
     {
-#if DEBUG
         printf("TaskA\r\n");
-        // size = xPortGetFreeHeapSize();
-        // printf("ta size %d\r\n", size);
-        // mark = uxTaskGetStackHighWaterMark(taskA);
-        // printf("mark %d\r\n", mark);
-#endif
         ToggleLED(LEDItemRed);
         vTaskDelay(pdMS_TO_TICKS(500));
     }
@@ -190,9 +178,7 @@ void TaskB(void *parameters)
 {
     while (1)
     {
-#if DEBUG
         printf("TaskB\r\n");
-#endif
         ToggleLED(LEDItemGreen);
         vTaskDelay(pdMS_TO_TICKS(1000));
     }
@@ -202,9 +188,7 @@ void TaskC(void *parameters)
 {
     while (1)
     {
-#if DEBUG
         printf("TaskC\r\n");
-#endif
         ToggleLED(LEDItemBlue);
         vTaskDelay(pdMS_TO_TICKS(2000));
     }
@@ -216,7 +200,6 @@ void TaskD(void *parameters)
     configSTACK_DEPTH_TYPE mark = 0;
     while (1)
     {
-#if DEBUG
         printf("TaskD\r\n");
         size = xPortGetFreeHeapSize();
         printf("FreeHeapSize %d\r\n", size);
@@ -228,37 +211,7 @@ void TaskD(void *parameters)
         printf("Task C StackHighWaterMark %d\r\n", mark);
         mark = uxTaskGetStackHighWaterMark2(taskD);
         printf("Task D StackHighWaterMark %d\r\n", mark);
-#endif
         vTaskDelay(pdMS_TO_TICKS(1000));
-    }
-}
-
-/* Define a callback function that will be used by multiple timer
-instances.  The callback function does nothing but count the number
-of times the associated timer expires, and stop the timer once the
-timer has expired 10 times.  The count is saved as the ID of the
-timer. */
-void vTimerCallback(TimerHandle_t xTimer)
-{
-    TimerID timerID;
-
-    /* Optionally do something if the pxTimer parameter is NULL. */
-    configASSERT(xTimer);
-    timerID = (uint32_t)pvTimerGetTimerID(xTimer);
-    printf("timer call back: id is %d, name is %s\r\n", timerID, pcTimerGetName(xTimer));
-    switch (timerID)
-    {
-    case TimerIDLEDRed:
-        ToggleLED(LEDItemRed);
-        break;
-    case TimerIDLEDGreen:
-        ToggleLED(LEDItemGreen);
-        break;
-    case TimerIDLEDBlue:
-        ToggleLED(LEDItemBlue);
-        break;
-    default:
-        break;
     }
 }
 
@@ -267,8 +220,7 @@ void freertos_risc_v_application_exception_handler(UBaseType_t mcause)
     printf("exception: the mcause is 0x%x\r\n", mcause);
     // printf("exception, the mepc is 0x%x\n", read_csr(mepc));
     // printf("exception, the mtval is 0x%x\n", read_csr(mbadaddr));
-    for (;;)
-        ;
+    for(;;);
 }
 
 void freertos_risc_v_application_interrupt_handler(UBaseType_t mcause)
@@ -311,4 +263,32 @@ void vApplicationDaemonTaskStartupHook(void)
 #if configUSE_DAEMON_TASK_STARTUP_HOOK == ON
     printf("DaemonTask\r\n");
 #endif
+}
+/* Define a callback function that will be used by multiple timer
+instances.  The callback function does nothing but count the number
+of times the associated timer expires, and stop the timer once the
+timer has expired 10 times.  The count is saved as the ID of the
+timer. */
+void TimerCallback(TimerHandle_t xTimer)
+{
+    TimerID timerID;
+
+    /* Optionally do something if the pxTimer parameter is NULL. */
+    configASSERT(xTimer);
+    timerID = (uint32_t)pvTimerGetTimerID(xTimer);
+    printf("timer call back: id is %d, name is %s\r\n", timerID, pcTimerGetName(xTimer));
+    switch (timerID)
+    {
+    case TimerIDLEDRed:
+        ToggleLED(LEDItemRed);
+        break;
+    case TimerIDLEDGreen:
+        ToggleLED(LEDItemGreen);
+        break;
+    case TimerIDLEDBlue:
+        ToggleLED(LEDItemBlue);
+        break;
+    default:
+        break;
+    }
 }
