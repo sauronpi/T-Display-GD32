@@ -7,8 +7,4 @@
 #define DEBUG_HOOK              ON
 #define DEBUG_TASK              ON
 
-#if DEBUG == ON
-#else
-#endif
-
 #endif
