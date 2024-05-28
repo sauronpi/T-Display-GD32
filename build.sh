@@ -26,5 +26,6 @@ TARGET=HelloWorld
 # TARGET=FreeRTOSSemaphoreMutex
 # TARGET=FreeRTOSTask
 # TARGET=FreeRTOSTemplate
+# TARGET=FreeRTOSTimer
 
 make $MAKE_OPTION TARGET=$TARGET OS=$OS $FLASH
