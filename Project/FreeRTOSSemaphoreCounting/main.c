@@ -152,7 +152,7 @@ void TaskC(void *parameters)
                 printf("TaskC semaphore give failed");
 #endif
             }
-            vTaskDelay(1000);
+            vTaskDelay(pdMS_TO_TICKS(1000));
         }
     }
 }

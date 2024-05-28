@@ -107,7 +107,7 @@ void TaskB(void *parameters)
                 printf("TaskB send message succeed, value = %d\r\n", message.value);
 #endif
                 ToggleLED(LEDItemGreen);
-                vTaskDelay(1000);
+                vTaskDelay(pdMS_TO_TICKS(1000));
             }
             else
             {
@@ -133,7 +133,7 @@ void TaskC(void *parameters)
                 printf("TaskC send message succeed, value = %d\r\n", message.value);
 #endif
                 ToggleLED(LEDItemBlue);
-                vTaskDelay(1500);
+                vTaskDelay(pdMS_TO_TICKS(1500));
             }
             else
             {
@@ -158,7 +158,7 @@ void TaskD(void *parameters)
         mark = uxTaskGetStackHighWaterMark2(taskD);
         printf("StackHighWaterMark %d\r\n", mark);
 #endif
-        vTaskDelay(1000);
+        vTaskDelay(pdMS_TO_TICKS(1000));
     }
 }
 

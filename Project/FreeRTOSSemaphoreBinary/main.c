@@ -146,7 +146,7 @@ void TaskC(void *parameters)
     while (1)
     {
         random = RandomWithRange(1, 5);
-        vTaskDelay(random * 1000);
+        vTaskDelay(pdMS_TO_TICKS(random * 1000));
 #if DEBUG
         printf("task c done, delay = %ds\r\n", random);
 #endif

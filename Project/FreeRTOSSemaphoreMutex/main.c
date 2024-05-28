@@ -88,7 +88,7 @@ void TaskA(void *parameters)
 #if DEBUG
                     printf("TaskA semaphore give succeed\r\n");
 #endif
-                    vTaskDelay(100);
+                    vTaskDelay(pdMS_TO_TICKS(100));
                 }
                 else
                 {
@@ -124,7 +124,7 @@ void TaskB(void *parameters)
 #if DEBUG
                     printf("TaskB semaphore give succeed\r\n");
 #endif
-                vTaskDelay(1000);
+                vTaskDelay(pdMS_TO_TICKS(1000));
                 }
                 else
                 {

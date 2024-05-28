@@ -131,7 +131,7 @@ void TaskA(void *parameters)
         taskEXIT_CRITICAL();
 #endif
         ToggleLED(LEDItemRed);
-        vTaskDelay(500);
+        vTaskDelay(pdMS_TO_TICKS(500));
     }
 }
 
@@ -145,7 +145,7 @@ void TaskB(void *parameters)
         taskEXIT_CRITICAL();
 #endif
         ToggleLED(LEDItemGreen);
-        vTaskDelay(1000);
+        vTaskDelay(pdMS_TO_TICKS(1000));
     }
 }
 
@@ -159,7 +159,7 @@ void TaskC(void *parameters)
         taskEXIT_CRITICAL();
 #endif
         ToggleLED(LEDItemBlue);
-        vTaskDelay(1500);
+        vTaskDelay(pdMS_TO_TICKS(1500));
     }
 }
 
@@ -178,7 +178,7 @@ void TaskD(void *parameters)
         debugprint("StackHighWaterMark %d\r\n", mark);
         taskEXIT_CRITICAL();
 #endif
-        vTaskDelay(1000);
+        vTaskDelay(pdMS_TO_TICKS(1000));
     }
 }
 

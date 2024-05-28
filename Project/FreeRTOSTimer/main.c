@@ -182,7 +182,7 @@ void TaskA(void *parameters)
         // printf("mark %d\r\n", mark);
 #endif
         ToggleLED(LEDItemRed);
-        vTaskDelay(500);
+        vTaskDelay(pdMS_TO_TICKS(500));
     }
 }
 
@@ -194,7 +194,7 @@ void TaskB(void *parameters)
         printf("TaskB\r\n");
 #endif
         ToggleLED(LEDItemGreen);
-        vTaskDelay(1000);
+        vTaskDelay(pdMS_TO_TICKS(1000));
     }
 }
 
@@ -206,7 +206,7 @@ void TaskC(void *parameters)
         printf("TaskC\r\n");
 #endif
         ToggleLED(LEDItemBlue);
-        vTaskDelay(2000);
+        vTaskDelay(pdMS_TO_TICKS(2000));
     }
 }
 
@@ -229,7 +229,7 @@ void TaskD(void *parameters)
         mark = uxTaskGetStackHighWaterMark2(taskD);
         printf("Task D StackHighWaterMark %d\r\n", mark);
 #endif
-        vTaskDelay(1000);
+        vTaskDelay(pdMS_TO_TICKS(1000));
     }
 }
 
