@@ -55,10 +55,8 @@ int main(void)
     xTaskCreate(TaskCreater, "TaskCreater", 256, NULL, 2, &taskCreater);
     printf("2\r\n");
     vTaskStartScheduler();
-    while (1)
-    {
-        printf("RTOS Exit\r\n");
-    }
+    printf("FreeRTOS Exit\r\n");
+    for(;;);
 }
 
 /* retarget the C library printf function to the USART */
