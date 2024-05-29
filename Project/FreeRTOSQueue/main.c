@@ -49,11 +49,8 @@ int main(void)
 
     xTaskCreate(TaskCreater, "TaskCreater", 256, NULL, 2, &taskCreater);
     vTaskStartScheduler();
-
-    while (1)
-    {
-        printf("RTOS Exit\r\n");
-    }
+    printf("RTOS Exit\r\n");
+    for(;;);
     return 0;
 }
 
@@ -76,18 +73,14 @@ void TaskA(void *parameters)
     {
         if (taskAMessageQueue != NULL)
         {
-            if (xQueueReceive(taskAMessageQueue, &message, portMAX_DELAY) == pdTRUE)
+            if (xQueueReceive(taskAMessageQueue, &message, portMAX_DELAY) == pdPASS)
             {
-#if DEBUG
                 printf("TaskA receive message succeed, value = %d\r\n", message.value);
-#endif
                 ToggleLED(LEDItemRed);
             }
             else
             {
-#if DEBUG
                 printf("TaskA receive message failed");
-#endif
             }
         }
     }
@@ -101,19 +94,15 @@ void TaskB(void *parameters)
     {
         if (taskAMessageQueue != NULL)
         {
-            if (xQueueSend(taskAMessageQueue, &message, portMAX_DELAY) == pdTRUE)
+            if (xQueueSend(taskAMessageQueue, &message, portMAX_DELAY) == pdPASS)
             {
-#if DEBUG
                 printf("TaskB send message succeed, value = %d\r\n", message.value);
-#endif
                 ToggleLED(LEDItemGreen);
-                vTaskDelay(pdMS_TO_TICKS(1000));
+                vTaskDelay(pdMS_TO_TICKS(500));
             }
             else
             {
-#if DEBUG
                 printf("TaskB send message failed");
-#endif
             }
         }
     }
@@ -127,19 +116,15 @@ void TaskC(void *parameters)
     {
         if (taskAMessageQueue != NULL)
         {
-            if (xQueueSend(taskAMessageQueue, &message, portMAX_DELAY) == pdTRUE)
+            if (xQueueSend(taskAMessageQueue, &message, portMAX_DELAY) == pdPASS)
             {
-#if DEBUG
                 printf("TaskC send message succeed, value = %d\r\n", message.value);
-#endif
                 ToggleLED(LEDItemBlue);
-                vTaskDelay(pdMS_TO_TICKS(1500));
+                vTaskDelay(pdMS_TO_TICKS(500));
             }
             else
             {
-#if DEBUG
                 printf("TaskC send message failed");
-#endif
             }
         }
     }
@@ -147,70 +132,72 @@ void TaskC(void *parameters)
 
 void TaskD(void *parameters)
 {
-    size_t size = 0;
-    configSTACK_DEPTH_TYPE mark = 0;
+    Message message = { 3 };
+
     while (1)
     {
-#if DEBUG
-        printf("TaskD\r\n");
-        size = xPortGetFreeHeapSize();
-        printf("FreeHeapSize %d\r\n", size);
-        mark = uxTaskGetStackHighWaterMark2(taskD);
-        printf("StackHighWaterMark %d\r\n", mark);
-#endif
-        vTaskDelay(pdMS_TO_TICKS(1000));
+        if (taskAMessageQueue != NULL)
+        {
+            if (xQueueSend(taskAMessageQueue, &message, portMAX_DELAY) == pdPASS)
+            {
+                printf("TaskD send message succeed, value = %d\r\n", message.value);
+                ToggleLED(LEDItemBlue);
+                vTaskDelay(pdMS_TO_TICKS(1000));
+            }
+            else
+            {
+                printf("TaskC send message failed");
+            }
+        }
     }
 }
 
 void freertos_risc_v_application_exception_handler(UBaseType_t mcause)
 {
-#if DEBUG_EXCEPTION
-    printf("exception: 0x%04x\r\n", mcause);
-    printf("In trap handler, the mcause is %d\n", mcause);
-    printf("In trap handler, the mepc is 0x%x\n", read_csr(mepc));
-    printf("In trap handler, the mtval is 0x%x\n", read_csr(mbadaddr));
-    _exit(mcause);
-#endif
+    printf("exception: the mcause is 0x%x\r\n", mcause);
+    // printf("exception, the mepc is 0x%x\n", read_csr(mepc));
+    // printf("exception, the mtval is 0x%x\n", read_csr(mbadaddr));
+    for(;;);
 }
 
 void freertos_risc_v_application_interrupt_handler(UBaseType_t mcause)
 {
 #if DEBUG_INTERRUPT
-    printf("interrupt: 0x%04x\r\n", mcause);
+    printf("interrupt: the mcause is %x\r\n", mcause);
 #endif
 }
 
 void vApplicationTickHook(void)
 {
-#if DEBUG_HOOK
-// printf("Tick\r\n");
+#if configUSE_TICK_HOOK == ON
+    printf("Tick\r\n");
 #endif
 }
 
 void vApplicationIdleHook(void)
 {
-#if DEBUG_HOOK
-// printf("Idle\r\n");
+#if configUSE_IDLE_HOOK == ON
+    printf("Idle\r\n");
 #endif
 }
 
 void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName)
 {
-#if DEBUG_HOOK
+#if configCHECK_FOR_STACK_OVERFLOW == ON
     printf("task：%s Overflow\r\n", pcTaskName);
 #endif
 }
 
 void vApplicationMallocFailedHook(void)
 {
-#if DEBUG_HOOK
+#if configUSE_MALLOC_FAILED_HOOK == ON
     printf("MallocFailed\r\n");
 #endif
 }
 
 void vApplicationDaemonTaskStartupHook(void)
 {
-#if DEBUG_HOOK
+#if configUSE_DAEMON_TASK_STARTUP_HOOK == ON
     printf("DaemonTask\r\n");
 #endif
 }
