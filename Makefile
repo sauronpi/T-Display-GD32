@@ -206,7 +206,7 @@ clean:
 flash: all
 	$()openocd -c "adapter driver cmsis-dap; adapter speed 5000; transport select jtag" -f ./gd32vf103.cfg -c "program $(BUILD_DIR)/$(TARGET).elf" -c "reset; exit"
 
-debug: all
+debug:
 	$()openocd -c "adapter driver cmsis-dap; adapter speed 5000; transport select jtag" -f ./gd32vf103.cfg 
 
 dfu: all
