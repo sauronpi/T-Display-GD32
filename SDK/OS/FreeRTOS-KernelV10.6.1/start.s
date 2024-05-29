@@ -195,7 +195,7 @@ _start0800:
     存器mtvt2 的值（忽略最低 2 位的值）指定。为了让中断以尽可能快的速度被响应和处理，
     推荐将CSR 寄存器 mtvt2 的最低位设置为 1，即，由mtvt2 指定一个独立的入口地址供所
     有非向量中断专用，和异常的入口地址（由 mtvec 的值指定）彻底分开。*/
-    la t0, freertos_risc_v_interrupt_handler
+    la t0, freertos_risc_v_trap_handler
     csrw CSR_MTVT2, t0
     csrs CSR_MTVT2, 0x1 /* 非向量中断入口 与 异常入口分开 */
 

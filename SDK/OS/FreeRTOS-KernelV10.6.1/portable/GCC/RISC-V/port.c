@@ -151,7 +151,7 @@ size_t xTaskReturnAddress = ( size_t ) portTASK_RETURN_ADDRESS;
 
         /* Prepare the time to use after the next tick interrupt. */
         ullNextTime += ( uint64_t ) uxTimerIncrementsForOneTick;
-        eclic_set_vmode(CLIC_INT_TMR);
+        eclic_set_vmode(CLIC_INT_TMR);//CLIC_INT_TMR使用中断向量表
         eclic_irq_enable(CLIC_INT_TMR, 1, 0);
     }
 

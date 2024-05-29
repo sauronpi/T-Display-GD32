@@ -297,13 +297,13 @@ xPortStartFirstTask:
 .section .text.freertos_risc_v_exception_handler
 freertos_risc_v_exception_handler:
     portcontextSAVE_EXCEPTION_CONTEXT
-    /* a0 now contains mcause. */
-    li t0, 0x8000001F                   /* Mask */
-    and a1, a0, t0                      /* 低 5 位为异常编号域 */
-    li t1, 8                            /* User Mode 下执行 ecall 指令 */
-    beq a1, t1, exception_task_switch   /* Environment call */
-    li t1, 11                           /* Machine Mode 下执行 ecall 指令 */
-    beq a1, t1, exception_task_switch   /* Environment call */
+    /* a0 contains mcause. */
+    li t0, 0x0000001F                   /* Mask */
+    and t1, a0, t0                      /* 低 5 位为异常编号域 */
+    li t2, 8                   /* User Mode 下执行 ecall 指令 */
+    beq t1, t2, exception_task_switch   /* Environment call */
+    li t2, 11                   /* Machine Mode 下执行 ecall 指令 */
+    beq t1, t2, exception_task_switch   /* Environment call */
     j other_exception
 exception_task_switch:
     call vTaskSwitchContext
@@ -339,7 +339,8 @@ freertos_risc_v_trap_handler:
 
     csrr a0, mcause
     csrr a1, mepc
-
+    /* 注意这里把mcause中读出来的数当做符号数，高位1表示负数 */
+	/* 异步异常时，mcause寄存器的高位是1（负数）；同步异常，mcause寄存的高位是0 */
     bge a0, x0, synchronous_exception
 
 asynchronous_interrupt:
@@ -357,10 +358,15 @@ handle_interrupt:
 #if( portasmHAS_MTIME != 0 )
 
     test_if_mtimer:                     /* If there is a CLINT then the mtimer is used to generate the tick interrupt. */
-        addi t0, x0, 1
-        slli t0, t0, __riscv_xlen - 1   /* LSB is already set, shift into MSB.  Shift 31 on 32-bit or 63 on 64-bit cores. */
-        addi t1, t0, 7                  /* 0x8000[]0007 == machine timer interrupt. */
-        bne a0, t1, application_interrupt_handler
+        # addi t0, x0, 1
+        # slli t0, t0, __riscv_xlen - 1   /* LSB is already set, shift into MSB.  Shift 31 on 32-bit or 63 on 64-bit cores. */
+        # addi t1, t0, 7                  /* 0x8000[]0007 == machine timer interrupt. */
+        # bne a0, t1, application_interrupt_handler
+        
+        li t0, 0x0000001F                   /* Mask */
+        and t1, a0, t0                      /* 低 5 位为异常编号域 */
+        li t2, 7                            /* MachineTimer 中断编号为7*/
+        bne t1, t2, application_interrupt_handler
 
         portUPDATE_MTIMER_COMPARE_REGISTER
         call xTaskIncrementTick
@@ -376,12 +382,12 @@ application_interrupt_handler:
 
 handle_exception:
    /* a0 contains mcause. */
-    li t0, 0x8000001F                   /* Mask */
-    and a1, a0, t0                      /* 低 5 位为异常编号域 */
-    li t1, 8                            /* User Mode 下执行 ecall 指令 */
-    beq a1, t1, trap_task_switch        /* Environment call */
-    li t1, 11                           /* Machine Mode 下执行 ecall 指令 */
-    beq a1, t1, trap_task_switch        /* Environment call */
+    li t0, 0x0000001F                   /* Mask */
+    and t1, a0, t0                      /* 低 5 位为异常编号域 */
+    li t2, 8                            /* User Mode 下执行 ecall 指令 */
+    beq t1, t2, trap_task_switch        /* Environment call */
+    li t2, 11                           /* Machine Mode 下执行 ecall 指令 */
+    beq t1, t2, trap_task_switch        /* Environment call */
 
 application_exception_handler:
     call freertos_risc_v_application_exception_handler
