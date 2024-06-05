@@ -15,13 +15,13 @@ void TaskCreater(void *parameters);
 void TaskA(void *parameters);
 void TaskB(void *parameters);
 void TaskC(void *parameters);
-void TaskD(void *parameters);
+void TaskMonitor(void *parameters);
 
 TaskHandle_t taskCreater = NULL;
 TaskHandle_t taskA = NULL;
 TaskHandle_t taskB = NULL;
 TaskHandle_t taskC = NULL;
-TaskHandle_t taskD = NULL;
+TaskHandle_t taskMonitor = NULL;
 
 void IRQConfigure(void)
 {
@@ -91,7 +91,7 @@ void TaskCreate(void)
 #if DEBUG
     debugprint("tc4 size %d\r\n", size);
 #endif
-    xTaskCreate(TaskD, "TaskD", 256, NULL, 2, &taskD);
+    xTaskCreate(TaskMonitor, "TaskMonitor", 256, NULL, 2, &taskMonitor);
     size = xPortGetFreeHeapSize();
 #if DEBUG
     debugprint("tc5 size %d\r\n", size);
@@ -100,7 +100,7 @@ void TaskCreate(void)
     debugprint("A=%x\r\n", taskA);
     debugprint("B=%x\r\n", taskB);
     debugprint("C=%x\r\n", taskC);
-    debugprint("D=%x\r\n", taskD);
+    debugprint("D=%x\r\n", taskMonitor);
 #endif
 }
 
@@ -110,7 +110,7 @@ void TaskCreater(void *parameters)
     xTaskCreate(TaskA, "TaskA", 256, NULL, 2, &taskA);
     xTaskCreate(TaskB, "TaskB", 256, NULL, 2, &taskB);
     xTaskCreate(TaskC, "TaskC", 256, NULL, 2, &taskC);
-    xTaskCreate(TaskD, "TaskD", 256, NULL, 2, &taskD);
+    xTaskCreate(TaskMonitor, "TaskMonitor", 256, NULL, 2, &taskMonitor);
     taskEXIT_CRITICAL();
     vTaskDelete(taskCreater);
 }
@@ -163,7 +163,7 @@ void TaskC(void *parameters)
     }
 }
 
-void TaskD(void *parameters)
+void TaskMonitor(void *parameters)
 {
     size_t size = 0;
     configSTACK_DEPTH_TYPE mark = 0;
@@ -171,10 +171,10 @@ void TaskD(void *parameters)
     {
 #if DEBUG
         taskENTER_CRITICAL();
-        debugprint("TaskD\r\n");
+        debugprint("TaskMonitor\r\n");
         size = xPortGetFreeHeapSize();
         debugprint("FreeHeapSize %d\r\n", size);
-        mark = uxTaskGetStackHighWaterMark2(taskD);
+        mark = uxTaskGetStackHighWaterMark2(taskMonitor);
         debugprint("StackHighWaterMark %d\r\n", mark);
         taskEXIT_CRITICAL();
 #endif

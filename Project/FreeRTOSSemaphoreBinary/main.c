@@ -136,8 +136,7 @@ void freertos_risc_v_application_exception_handler(UBaseType_t mcause)
     printf("exception: the mcause is 0x%x\r\n", mcause);
     // printf("exception, the mepc is 0x%x\n", read_csr(mepc));
     // printf("exception, the mtval is 0x%x\n", read_csr(mbadaddr));
-    for (;;)
-        ;
+    for(;;);
 }
 
 void freertos_risc_v_application_interrupt_handler(UBaseType_t mcause)

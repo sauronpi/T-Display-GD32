@@ -9,6 +9,12 @@
 
 #include "tsprintf.h"
 
+TaskHandle_t taskCreater = NULL;
+TaskHandle_t taskA = NULL;
+TaskHandle_t taskB = NULL;
+TaskHandle_t taskC = NULL;
+TaskHandle_t taskMonitor = NULL;
+
 // 系统初始化函数使用标准工具链时没有在main函数前调用,声明后手动调用
 extern void _init();
 
@@ -17,13 +23,7 @@ void TaskCreater(void *parameters);
 void TaskA(void *parameters);
 void TaskB(void *parameters);
 void TaskC(void *parameters);
-void TaskD(void *parameters);
-
-TaskHandle_t taskCreater = NULL;
-TaskHandle_t taskA = NULL;
-TaskHandle_t taskB = NULL;
-TaskHandle_t taskC = NULL;
-TaskHandle_t taskD = NULL;
+void TaskMonitor(void *parameters);
 
 void IRQConfigure(void)
 {
@@ -52,11 +52,11 @@ int main(void)
     printf("size of int = %d\r\n", sizeof(int));
     printf("size of long = %d\r\n", sizeof(long));
     // TaskCreate();
-    xTaskCreate(TaskCreater, "TaskCreater", 256, NULL, 2, &taskCreater);
-    printf("2\r\n");
+
+    TaskCreate(TaskCreater, "TaskCreater", 256, NULL, 2, &taskCreater);    vTaskStartScheduler();
     vTaskStartScheduler();
     printf("FreeRTOS Exit\r\n");
-    for(;;);
+    for (;;);
 }
 
 /* retarget the C library printf function to the USART */
@@ -81,13 +81,13 @@ void TaskCreate(void)
     xTaskCreate(TaskC, "TaskC", 256, NULL, 3, &taskC);
     size = xPortGetFreeHeapSize();
     printf("tc4 size %d\r\n", size);
-    xTaskCreate(TaskD, "TaskD", 256, NULL, 2, &taskD);
+    xTaskCreate(TaskMonitor, "TaskMonitor", 256, NULL, 2, &taskMonitor);
     size = xPortGetFreeHeapSize();
     printf("tc5 size %d\r\n", size);
     printf("A=%x\r\n", taskA);
     printf("B=%x\r\n", taskB);
     printf("C=%x\r\n", taskC);
-    printf("D=%x\r\n", taskD);
+    printf("D=%x\r\n", taskMonitor);
 }
 
 void TaskCreater(void *parameters)
@@ -96,7 +96,7 @@ void TaskCreater(void *parameters)
     xTaskCreate(TaskA, "TaskA", 256, NULL, 2, &taskA);
     xTaskCreate(TaskB, "TaskB", 256, NULL, 2, &taskB);
     xTaskCreate(TaskC, "TaskC", 256, NULL, 2, &taskC);
-    xTaskCreate(TaskD, "TaskD", 256, NULL, 2, &taskD);
+    xTaskCreate(TaskMonitor, "Monitor", 256, NULL, 2, &taskMonitor);
     taskEXIT_CRITICAL();
     vTaskDelete(taskCreater);
 }
@@ -133,13 +133,13 @@ void TaskC(void *parameters)
     }
 }
 
-void TaskD(void *parameters)
+void TaskMonitor(void *parameters)
 {
     size_t size = 0;
     configSTACK_DEPTH_TYPE mark = 0;
     while (1)
     {
-        printf("TaskD\r\n");
+        printf("TaskMonitor:\r\n");
         size = xPortGetFreeHeapSize();
         printf("FreeHeapSize %d\r\n", size);
         mark = uxTaskGetStackHighWaterMark2(taskA);
@@ -148,7 +148,7 @@ void TaskD(void *parameters)
         printf("Task B StackHighWaterMark %d\r\n", mark);
         mark = uxTaskGetStackHighWaterMark2(taskC);
         printf("Task C StackHighWaterMark %d\r\n", mark);
-        mark = uxTaskGetStackHighWaterMark2(taskD);
+        mark = uxTaskGetStackHighWaterMark2(taskMonitor);
         printf("Task D StackHighWaterMark %d\r\n", mark);
         vTaskDelay(pdMS_TO_TICKS(1000));
     }

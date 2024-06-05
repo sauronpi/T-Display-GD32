@@ -18,14 +18,14 @@ void TaskCreater(void *parameters);
 void TaskA(void *parameters);
 void TaskB(void *parameters);
 void TaskC(void *parameters);
-void TaskD(void *parameters);
+void TaskMonitor(void *parameters);
 void TimerHandler(TimerHandle_t xTimer);
 
 TaskHandle_t taskCreater = NULL;
 TaskHandle_t taskA = NULL;
 TaskHandle_t taskB = NULL;
 TaskHandle_t taskC = NULL;
-TaskHandle_t taskD = NULL;
+TaskHandle_t taskMonitor = NULL;
 
 typedef enum
 {
@@ -142,13 +142,13 @@ void TaskCreate(void)
     xTaskCreate(TaskC, "TaskC", 256, NULL, 3, &taskC);
     size = xPortGetFreeHeapSize();
     printf("tc4 size %d\r\n", size);
-    xTaskCreate(TaskD, "TaskD", 256, NULL, 2, &taskD);
+    xTaskCreate(TaskMonitor, "TaskMonitor", 256, NULL, 2, &taskMonitor);
     size = xPortGetFreeHeapSize();
     printf("tc5 size %d\r\n", size);
     printf("A=%x\r\n", taskA);
     printf("B=%x\r\n", taskB);
     printf("C=%x\r\n", taskC);
-    printf("D=%x\r\n", taskD);
+    printf("D=%x\r\n", taskMonitor);
 }
 
 void TaskCreater(void *parameters)
@@ -157,7 +157,7 @@ void TaskCreater(void *parameters)
     xTaskCreate(TaskA, "TaskA", 256, NULL, 2, &taskA);
     xTaskCreate(TaskB, "TaskB", 256, NULL, 2, &taskB);
     xTaskCreate(TaskC, "TaskC", 256, NULL, 2, &taskC);
-    xTaskCreate(TaskD, "TaskD", 256, NULL, 2, &taskD);
+    xTaskCreate(TaskMonitor, "TaskMonitor", 256, NULL, 2, &taskMonitor);
     taskEXIT_CRITICAL();
     vTaskDelete(taskCreater);
 }
@@ -194,13 +194,13 @@ void TaskC(void *parameters)
     }
 }
 
-void TaskD(void *parameters)
+void TaskMonitor(void *parameters)
 {
     size_t size = 0;
     configSTACK_DEPTH_TYPE mark = 0;
     while (1)
     {
-        printf("TaskD\r\n");
+        printf("TaskMonitor\r\n");
         size = xPortGetFreeHeapSize();
         printf("FreeHeapSize %d\r\n", size);
         mark = uxTaskGetStackHighWaterMark2(taskA);
@@ -209,7 +209,7 @@ void TaskD(void *parameters)
         printf("Task B StackHighWaterMark %d\r\n", mark);
         mark = uxTaskGetStackHighWaterMark2(taskC);
         printf("Task C StackHighWaterMark %d\r\n", mark);
-        mark = uxTaskGetStackHighWaterMark2(taskD);
+        mark = uxTaskGetStackHighWaterMark2(taskMonitor);
         printf("Task D StackHighWaterMark %d\r\n", mark);
         vTaskDelay(pdMS_TO_TICKS(1000));
     }

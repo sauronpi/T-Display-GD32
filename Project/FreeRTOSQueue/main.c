@@ -10,15 +10,6 @@
 
 #include "tsprintf.h"
 
-// 系统初始化函数使用标准工具链时没有在main函数前调用,声明后手动调用
-extern void _init();
-
-void TaskCreater(void *parameters);
-void TaskA(void *parameters);
-void TaskB(void *parameters);
-void TaskC(void *parameters);
-void TaskD(void *parameters);
-
 typedef struct
 {
     int value;
@@ -28,9 +19,18 @@ TaskHandle_t taskCreater = NULL;
 TaskHandle_t taskA = NULL;
 TaskHandle_t taskB = NULL;
 TaskHandle_t taskC = NULL;
-TaskHandle_t taskD = NULL;
+TaskHandle_t taskMonitor = NULL;
 
 QueueHandle_t taskAMessageQueue = NULL;
+
+// 系统初始化函数使用标准工具链时没有在main函数前调用,声明后手动调用
+extern void _init();
+
+void TaskCreater(void *parameters);
+void TaskA(void *parameters);
+void TaskB(void *parameters);
+void TaskC(void *parameters);
+void TaskMonitor(void *parameters);
 
 void IRQConfigure(void)
 {
@@ -60,7 +60,7 @@ void TaskCreater(void *parameters)
     xTaskCreate(TaskA, "TaskA", 256, NULL, 2, &taskA);
     xTaskCreate(TaskB, "TaskB", 256, NULL, 2, &taskB);
     xTaskCreate(TaskC, "TaskC", 256, NULL, 2, &taskC);
-    xTaskCreate(TaskD, "TaskD", 256, NULL, 2, &taskD);
+    xTaskCreate(TaskMonitor, "TaskMonitor", 256, NULL, 2, &taskMonitor);
     taskEXIT_CRITICAL();
     vTaskDelete(taskCreater);
 }
@@ -130,7 +130,7 @@ void TaskC(void *parameters)
     }
 }
 
-void TaskD(void *parameters)
+void TaskMonitor(void *parameters)
 {
     Message message = { 3 };
 
@@ -140,7 +140,7 @@ void TaskD(void *parameters)
         {
             if (xQueueSend(taskAMessageQueue, &message, portMAX_DELAY) == pdPASS)
             {
-                printf("TaskD send message succeed, value = %d\r\n", message.value);
+                printf("TaskMonitor send message succeed, value = %d\r\n", message.value);
                 ToggleLED(LEDItemBlue);
                 vTaskDelay(pdMS_TO_TICKS(1000));
             }
